@@ -3,197 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All-in-One: QR & Summary Pro</title>
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3242/3242202.png">
+    <title>Diamond Pro V6.6 (Clean Sync)</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pastel-green: #e8f5e9;
-            --mint-dark: #a5d6a7;
-            --accent-green: #66bb6a;
+            --accent: #2ecc71;
+            --accent-dark: #27ae60;
+            --danger: #e74c3c;
             --deep-green: #2d6a4f;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
             --tmn-dark: #2d3436;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: all 0.2s ease; }
         body {
             font-family: 'Kanit', sans-serif;
-            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             min-height: 100vh;
             margin: 0; padding: 20px;
-            display: flex; justify-content: center; align-items: flex-start;
+            display: flex; justify-content: center;
         }
 
-        .container {
-            background: #ffffff;
+        .container { width: 100%; max-width: 500px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-card {
+            background: var(--card-bg);
+            border-radius: 30px;
             padding: 25px;
-            border-radius: 35px;
-            box-shadow: 0 20px 60px rgba(165, 214, 167, 0.2);
-            width: 100%; max-width: 500px;
+            box-shadow: 0 20px 50px rgba(46, 204, 113, 0.15);
+            text-align: center;
         }
 
-        /* --- แถบเมนู (Tabs) --- */
-        .tab-menu {
-            display: flex;
-            background: #f1f8f4;
-            padding: 8px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            gap: 5px;
+        .tab-nav {
+            display: flex; background: #f1f8f4;
+            padding: 6px; border-radius: 20px;
+            margin-bottom: 25px; gap: 5px;
         }
-
         .tab-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-family: 'Kanit';
-            font-weight: 500;
-            color: #7f8c8d;
-            background: transparent;
-            transition: 0.3s;
+            flex: 1; padding: 12px; border: none; border-radius: 15px;
+            cursor: pointer; font-family: 'Kanit'; font-weight: 500;
+            color: #7f8c8d; background: transparent;
         }
-
         .tab-btn.active {
-            background: white;
-            color: var(--deep-green);
+            background: white; color: var(--deep-green);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
+        .page { display: none; }
+        .page.active { display: block; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { color: var(--deep-green); font-size: 20px; margin-bottom: 20px; }
 
-        /* --- UI ส่วนกลาง --- */
-        h2 { text-align: center; color: var(--deep-green); font-size: 20px; margin-top: 0; }
-        
         textarea {
-            width: 100%; height: 150px;
-            border: 2px solid var(--pastel-green);
-            border-radius: 15px; padding: 15px;
-            font-family: 'Kanit'; font-size: 14px;
-            resize: none; outline: none; margin-bottom: 10px;
+            width: 100%; height: 120px; border: 2px solid #e8f5e9;
+            border-radius: 15px; padding: 15px; font-family: 'Kanit';
+            resize: none; outline: none; margin-bottom: 15px;
+        }
+        .final-text {
+            background: #f9fdf9; border: 1px dashed var(--accent);
+            padding: 15px; border-radius: 15px;
+            white-space: pre-wrap; font-size: 16px; text-align: left; margin-bottom: 15px;
         }
 
         .drop-zone {
-            border: 2px dashed var(--mint-dark);
-            padding: 40px 20px;
-            margin-bottom: 20px;
-            cursor: pointer; border-radius: 20px;
-            background: #f9fdf9; color: #666;
-            text-align: center; transition: 0.3s;
+            border: 2px dashed var(--accent); padding: 30px;
+            border-radius: 20px; background: #f9fdf9;
+            cursor: pointer; margin-bottom: 15px;
         }
+        #preview { max-width: 100%; border-radius: 15px; display: none; margin: 10px 0; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
-        .drop-zone:hover { border-color: var(--accent-green); background: #f1f8f4; }
-
-        #preview {
-            max-width: 100%; border-radius: 15px;
-            display: none; margin-bottom: 20px;
-            border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 13px; color: var(--accent-dark); font-weight: 600; margin-left: 10px; }
+        input {
+            width: 100%; padding: 14px; border-radius: 15px;
+            border: 1px solid #dcdde1; margin-top: 5px; font-family: 'Kanit';
         }
 
         .btn-main {
-            background: var(--accent-green); color: white;
-            border: none; padding: 15px; border-radius: 15px;
-            width: 100%; font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: 0.3s;
+            background: var(--accent-dark); color: white; border: none;
+            padding: 15px; border-radius: 15px; width: 100%;
+            font-size: 16px; font-weight: 600; cursor: pointer;
         }
-
-        .btn-main:hover { background: var(--deep-green); transform: translateY(-2px); }
-
-        .result-area {
-            background: #f1f8f4; border-radius: 20px;
-            padding: 20px; border: 1px solid #e0eee0; margin-top: 20px;
+        .btn-google {
+            background: #4285F4; color: white; border: none;
+            padding: 15px; border-radius: 15px; width: 100%;
+            font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
+        .btn-copy { background: var(--tmn-dark); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; }
 
-        .final-text {
-            background: #fff; border: 1px dashed var(--mint-dark);
-            padding: 15px; border-radius: 12px;
-            white-space: pre-wrap; font-size: 16px; color: #333; margin-bottom: 15px;
-        }
-
-        /* สำหรับหน้า QR */
-        .qr-card {
-            background: var(--tmn-dark); color: white;
-            padding: 20px; border-radius: 20px; text-align: left;
-        }
-        .qr-label { color: #95a5a6; font-size: 12px; margin-bottom: 8px; }
-        .qr-number { font-size: 24px; font-family: monospace; color: #55efc4; font-weight: bold; margin-bottom: 15px; }
-
-        .btn-copy {
-            background: var(--deep-green); color: white;
-            border: none; padding: 12px; border-radius: 12px;
-            width: 100%; cursor: pointer; font-size: 14px;
-        }
-
-        #status { text-align: center; font-size: 13px; color: #7f8c8d; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="tab-menu">
-        <button class="tab-btn active" onclick="switchTab('summary-page', this)">📊 สรุปยอดเงิน</button>
-        <button class="tab-btn" onclick="switchTab('qr-page', this)">🔍 สแกน QR Code</button>
-    </div>
-
-    <div id="summary-page" class="page active">
-        <h2>🧧 สรุปยอด (No Limits)</h2>
-        <textarea id="raw-input" placeholder="วางข้อความจากแชทที่นี่..."></textarea>
-        <button class="btn-main" onclick="calculateFixed()">ประมวลผลยอดรวม</button>
-
-        <div id="summary-result" class="result-area" style="display:none;">
-            <div class="final-text" id="output-text"></div>
-            <button class="btn-copy" onclick="copyText('output-text', this)">คัดลอกข้อความสรุป</button>
+    <div class="glass-card">
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('summary-page', this)">📊 สรุปยอด</button>
+            <button class="tab-btn" onclick="switchTab('check-page', this)">🔍 เช็คคนโกง/QR</button>
         </div>
-    </div>
 
-    <div id="qr-page" class="page">
-        <h2>🔍 QR ID Extractor</h2>
-        <div class="drop-zone" id="drop-zone">
-            <span>คลิก หรือ <b>Ctrl+V</b> เพื่อวางรูป QR</span>
-            <input type="file" id="qr-input" accept="image/*" style="display:none">
-        </div>
-        <img id="preview">
-
-        <div id="qr-result" class="result-area" style="display:none;">
-            <div class="qr-card">
-                <div class="qr-label">WALLET ID (15 หลัก)</div>
-                <div class="qr-number" id="id-number">Searching...</div>
-                <button class="btn-copy" onclick="copyText('id-number', this)">คัดลอกตัวเลข</button>
+        <div id="summary-page" class="page active">
+            <h2>🧧 ประมวลผลยอดรวม</h2>
+            <textarea id="raw-input" placeholder="วางข้อความจากแชท..."></textarea>
+            <button class="btn-main" onclick="calculateFixed()">ประมวลผลทันที</button>
+            <div id="summary-result" style="display:none; margin-top:20px;">
+                <div class="final-text" id="output-text"></div>
+                <button class="btn-copy" onclick="copyText('output-text', this)">📋 คัดลอกสรุป</button>
             </div>
         </div>
-        <div id="status">พร้อมใช้งาน</div>
+
+        <div id="check-page" class="page">
+            <h2>🛡️ ตรวจสอบผ่าน Google</h2>
+            <div class="drop-zone" onclick="document.getElementById('qr-input').click()">
+                <span>กด <b>Ctrl+V</b> หรือคลิกวางรูป QR</span>
+                <input type="file" id="qr-input" accept="image/*" style="display:none" onchange="processQR(this.files[0])">
+            </div>
+            <img id="preview">
+            
+            <div class="input-group">
+                <label>ชื่อ-นามสกุล (สำหรับค้นหา)</label>
+                <input type="text" id="target-name" placeholder="ระบุชื่อเพื่อค้นหาใน Google...">
+            </div>
+            <div class="input-group">
+                <label>WALLET ID (จากสแกน)</label>
+                <input type="text" id="target-id" readonly placeholder="เลข 15 หลักจะมาลงที่นี่...">
+            </div>
+            
+            <button class="btn-google" onclick="searchInGoogle()">
+                <img src="https://www.google.com/favicon.ico" width="20"> ค้นหาประวัติคนโกง
+            </button>
+            
+            <button class="btn-main" style="margin-top:15px; background:var(--tmn-dark);" onclick="location.reload()">🔄 ล้างข้อมูลทั้งหมด</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // --- ระบบสลับ Tab ---
     function switchTab(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        
         document.getElementById(pageId).classList.add('active');
         btn.classList.add('active');
     }
 
-    // --- Logic 1: สรุปยอดเงิน (แก้บัคแล้ว) ---
     function calculateFixed() {
         const input = document.getElementById('raw-input').value;
         if (!input.trim()) return;
-
         const lines = input.split('\n');
         let totalIn = 0, totalOut = 0, totalPeople = 0;
-
         lines.forEach(line => {
             const txt = line.trim();
             if (!txt) return;
             const cleanLine = txt.replace(/,/g, '');
             const numbers = cleanLine.match(/\d+/g);
-
             if (txt.includes('总入款金额')) {
                 if (numbers && numbers.length >= 2) {
                     totalIn += parseInt(numbers[numbers.length - 1]);
@@ -201,73 +168,61 @@
                 }
             }
             if (txt.includes('出款')) {
-                if (numbers) {
-                    totalOut += parseInt(numbers[numbers.length - 1]);
-                }
+                if (numbers) totalOut += parseInt(numbers[numbers.length - 1]);
             }
         });
-
         const resultText = `🧧 凤凰集团 拜林最牛逼 🧧\n\n💰总入款金额  ${totalPeople} คน  : ${totalIn.toLocaleString()}\n💸出款   :  ${totalOut.toLocaleString()}`;
         document.getElementById('output-text').innerText = resultText;
         document.getElementById('summary-result').style.display = 'block';
     }
 
-    // --- Logic 2: สแกน QR Code ---
-    const qrInput = document.getElementById('qr-input');
-    const dropZone = document.getElementById('drop-zone');
-    const statusText = document.getElementById('status');
-
-    dropZone.onclick = () => qrInput.click();
-    qrInput.onchange = e => processImage(e.target.files[0]);
-    document.onpaste = e => {
+    document.addEventListener('paste', e => {
         const item = e.clipboardData.items[0];
-        if (item && item.type.includes("image")) processImage(item.getAsFile());
-    };
+        if (item && item.type.includes("image")) processQR(item.getAsFile());
+    });
 
-    function processImage(file) {
+    function processQR(file) {
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (e) => { 
-            const preview = document.getElementById('preview');
-            preview.src = e.target.result; preview.style.display = 'block';
-            dropZone.style.display = 'none';
+        reader.onload = e => {
+            const img = document.getElementById('preview');
+            img.src = e.target.result; img.style.display = 'block';
         };
         reader.readAsDataURL(file);
 
-        const html5QrCode = new Html5Qrcode("status"); 
+        const html5QrCode = new Html5Qrcode("preview"); 
         html5QrCode.scanFile(file, true)
             .then(decodedText => {
                 let cleanData = decodedText.replace(/[^0-9]/g, '');
                 let match = cleanData.match(/140\d{12}/) || cleanData.match(/\d{15}/);
                 if (match) {
-                    document.getElementById('id-number').innerText = match[0];
-                    document.getElementById('qr-result').style.display = 'block';
-                    statusText.innerText = "ดึงข้อมูลสำเร็จ";
-                } else {
-                    alert("ไม่พบเลข 15 หลัก");
-                    resetQR();
+                    // แก้ไข: ให้ลงที่ช่อง WALLET ID (target-id) เท่านั้น!
+                    document.getElementById('target-id').value = match[0];
                 }
-            })
-            .catch(err => {
-                alert("อ่าน QR ไม่สำเร็จ");
-                resetQR();
-            });
+            }).catch(err => console.log("QR Scan Error"));
     }
 
-    function resetQR() {
-        document.getElementById('preview').style.display = 'none';
-        dropZone.style.display = 'block';
-        document.getElementById('qr-result').style.display = 'none';
-        statusText.innerText = "พร้อมใช้งาน";
+    function searchInGoogle() {
+        // ดึงค่าจากทั้งสองช่อง ถ้าช่องชื่อว่าง ให้ใช้ช่อง ID ค้นหาแทน
+        const nameQuery = document.getElementById('target-name').value.trim();
+        const idQuery = document.getElementById('target-id').value.trim();
+        const finalQuery = nameQuery || idQuery;
+
+        if (!finalQuery) {
+            alert("กรุณาใส่ชื่อหรือสแกน QR ก่อนค้นหา!");
+            return;
+        }
+        
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(finalQuery)}+โกง+blacklistseller`;
+        window.open(searchUrl, '_blank');
     }
 
-    // --- ระบบคัดลอกส่วนกลาง ---
     function copyText(elementId, btn) {
         const text = document.getElementById(elementId).innerText;
         navigator.clipboard.writeText(text).then(() => {
-            const originalText = btn.innerText;
-            btn.innerText = "คัดลอกแล้ว! ✓";
-            setTimeout(() => btn.innerText = originalText, 1500);
+            const old = btn.innerText;
+            btn.innerText = "คัดลอกแล้ว!";
+            setTimeout(() => btn.innerText = old, 1500);
         });
     }
 </script>
